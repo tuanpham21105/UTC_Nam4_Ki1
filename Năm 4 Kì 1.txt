@@ -1,0 +1,30 @@
+Năm 4 - Kì 1
+
+Môn Học máy
+	Gv: Lương Thái Lê
+		Sdt: 0973 223 450
+		Email: luongthaile50@gmail.com
+	Nội dung
+		3 tín 60/40
+		Điểm quá trình bao gồm điểm danh và bài tập
+		BTL viết báo cáo theo chủ đề cho trước, có thuyết trình. Nhóm 3 - 5 người
+		Thi cuối kì: Vấn đáp báo cáo và Điểm làm bài tập
+		
+Project 1
+	Gv: Nguyễn Trọng Phúc
+	Nội dung:
+		Tập trung vào QUY TRÌNH TRIỂN KHAI sản phẩm.
+		Team:
+			PM
+			Dev
+			Tester
+			DevOps
+		Xác định bài toán: Làm sản phẩm phần mềm
+
+Kiểm thử phần mềm
+	Gv: Nguyễn Thu Hường
+	Nội dung: 
+		Điểm quá trình: Chuyển cần + Bài ktra + BTL(Điểm BTL cộng cho bài ktra, Ko bắc buộc)
+		Thi: Tự luận
+			
+	

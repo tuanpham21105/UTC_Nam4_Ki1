@@ -1,0 +1,70 @@
+# UTC - CNTT - K64 - Năm 4 - Kì 1
+
+## Học máy
+
+### Giảng viên: Lương Thái Lê
+
+- Sdt: 0973 223 450
+- Email: luongthaile50@gmail.com
+
+### Nội dung
+
+* 3 tín 60/40
+* Điểm quá trình bao gồm điểm danh và bài tập
+* BTL viết báo cáo theo chủ đề cho trước, có thuyết trình. Nhóm 3 - 5 người
+* Thi cuối kì: Vấn đáp báo cáo và Điểm làm bài tập
+
+### Tài liệu
+
+- Nhóm Zalo
+
+## Project 1
+
+### Giảng viên: Nguyễn Trọng Phúc
+
+### Nội dung
+
+* 3 tín 60/40
+* BTL viết báo cáo, làm dự án chi tiết, tập trung vào **KẾ HOẠCH VÀ QUY TRÌNH THỰC HIỆN**
+
+### Tài liệu
+
+- Nhóm Teams
+
+## Khai phá dữ liệu
+
+### Giảng viên: Nguyễn Kim Sao
+
+### Nội dung
+
+- Thi tự luận
+
+### Tài liệu
+
+- Nhóm Whatsapp
+
+## Xử lý ảnh
+
+### Giảng viên:
+
+### Nội dung
+
+- Thi Thực hành
+
+### Tài liệu
+
+- Nhóm Teams
+
+## Kiểm thử phần mềm
+
+### Giảng viên: Nguyễn Thu Hường
+
+### Nội dung
+
+* Điểm quá trình: Chuyển cần + Bài ktra + BTL(Điểm BTL cộng cho bài ktra, Ko bắt buộc)
+* Thi: Tự luận
+
+### Tài liệu
+
+- E-Learning
+- Nhóm Zalo
