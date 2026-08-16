@@ -1,0 +1,17 @@
+DevOps
+	Nhiệm vụ chính là triển khai sản phẩm và giám sát hệ thống
+	Những công việc phải thực hiện:
+		Chuẩn bị môi trường Dev và Prod:
+			Đối với Dev: Tạo file cấu hình cho DB, quy định những thứ cần Logging, tạo quy ước chuẩn để khi chuyển sang môi trường khác nó vẫn hoạt động
+		Quản lý phiên bản: Quản lý các phiên bản cho hệ thống - GitHub
+		CI/CD: Tự động hóa quá trình build, test, deploy - GitHub Action
+		Container: Docker
+		Chuẩn bị hạ tầng: Máy chủ để deploy - FE: Vercel, BE: VPS, DB: Neon
+		Configuration Management
+		Cloud
+		Security
+		Monitoring
+		Logging
+		Alerting
+		Security
+		

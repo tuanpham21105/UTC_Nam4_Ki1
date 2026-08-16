@@ -25,7 +25,9 @@
 ### Nội dung
 
 * 3 tín 60/40
+* Điểm quá trình bao gồm điểm danh và báo cáo tiến độ của BTL
 * BTL viết báo cáo, làm dự án chi tiết, tập trung vào **KẾ HOẠCH VÀ QUY TRÌNH THỰC HIỆN**
+* Thi cuối kì báo cáo BTL
 
 ### Tài liệu
 
@@ -37,6 +39,7 @@
 
 ### Nội dung
 
+- Có BTL, cộng điểm quá trình, ko miễn thi
 - Thi tự luận
 
 ### Tài liệu
@@ -45,10 +48,11 @@
 
 ## Xử lý ảnh
 
-### Giảng viên:
+### Giảng viên: Cao Thị Luyên
 
 ### Nội dung
 
+- Ko có BTL
 - Thi Thực hành
 
 ### Tài liệu
@@ -61,8 +65,8 @@
 
 ### Nội dung
 
-* Điểm quá trình: Chuyển cần + Bài ktra + BTL(Điểm BTL cộng cho bài ktra, Ko bắt buộc)
-* Thi: Tự luận
+* Điểm quá trình: Chuyển cần + Bài ktra + BTL(Điểm BTL cộng cho bài ktra, Ko bắt buộc, ko miễn thi)
+* Thi tự luận
 
 ### Tài liệu
 
