@@ -11,8 +11,8 @@
 
 * 3 tín 60/40
 * Điểm quá trình bao gồm điểm danh và bài tập
-* BTL viết báo cáo theo chủ đề cho trước, có thuyết trình. Nhóm 3 - 5 người
-* Thi cuối kì: Vấn đáp báo cáo và Điểm làm bài tập
+* BTL là tìm bài báo liên quan đến chủ đề Machine Learning và triển khai mô hình theo bài báo đó
+* Thi cuối kì: Vấn đáp BTL và Điểm làm bài tập
 
 ### Tài liệu
 
