@@ -465,6 +465,4 @@ flowchart LR
     A1 --> UC
     S1(["Xem tiến độ theo học viên"])
     UC -.->|"«extend»"| S1
-    S2(["Xem tiến độ theo kỹ năng"])
-    UC -.->|"«extend»"| S2
 ```
