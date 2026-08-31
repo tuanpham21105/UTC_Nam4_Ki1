@@ -1,0 +1,992 @@
+\documentclass[12pt,a4paper]{article}
+
+% =========================
+% Font và ngôn ngữ tiếng Việt
+% =========================
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{vietnamese}
+\setmainfont{Times New Roman}
+
+% =========================
+% Hình ảnh và bảng
+% =========================
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{float}
+
+% =========================
+% Định dạng văn bản
+% =========================
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{enumitem}
+
+% =========================
+% Hộp nội dung
+% =========================
+\usepackage[most]{tcolorbox}
+
+% =========================
+% TikZ
+% =========================
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{pgfornament}
+
+% =========================
+% Căn lề
+% =========================
+\usepackage[
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=2cm,
+    right=2cm
+]{geometry}
+
+% =========================
+% Liên kết và mục lục
+% =========================
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+]{hyperref}
+
+% =========================================================
+% Định nghĩa macro \UseCaseBox dùng pgfkeys (key=value)
+% =========================================================
+\usepackage{pgfkeys}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{caption}
+
+\pgfkeys{
+  /usecase/.is family,
+  /usecase/ma/.initial={},
+  /usecase/ten/.initial={},
+  /usecase/tacnhan/.initial={},
+  /usecase/muctieu/.initial={},
+  /usecase/mota/.initial={},
+  /usecase/yeucau/.initial={},
+  /usecase/tiendk/.initial={},
+  /usecase/dongchinh/.initial={},
+  /usecase/dongphu/.initial={},
+  /usecase/haudk/.initial={},
+}
+
+\NewDocumentCommand{\UseCaseBox}{m}{
+  \pgfkeys{/usecase,,#1}
+  \pgfkeysgetvalue{/usecase/ma}{\ucMa}
+  \pgfkeysgetvalue{/usecase/ten}{\ucTen}
+  \pgfkeysgetvalue{/usecase/tacnhan}{\ucTacNhan}
+  \pgfkeysgetvalue{/usecase/muctieu}{\ucMucTieu}
+  \pgfkeysgetvalue{/usecase/mota}{\ucMota}
+  \pgfkeysgetvalue{/usecase/yeucau}{\ucYeuCau}
+  \pgfkeysgetvalue{/usecase/tiendk}{\ucTienDK}
+  \pgfkeysgetvalue{/usecase/dongchinh}{\ucDongChinh}
+  \pgfkeysgetvalue{/usecase/dongphu}{\ucDongPhu}
+  \pgfkeysgetvalue{/usecase/haudk}{\ucHauDK}
+
+  \nopagebreak
+  \begin{tcolorbox}[colback=white,colframe=black,width=\textwidth]
+    \textbf{Mã ca sử dụng:} \ucMa \\
+    \textbf{Tên ca sử dụng:} \ucTen \\
+    \textbf{Tác nhân:} \ucTacNhan \\
+    \textbf{Mục tiêu:} \ucMucTieu
+    \par\vspace{0.2cm}
+    \textbf{Mô tả tổng quan:} \\
+    \ucMota
+    \par\vspace{0.2cm}
+    \textbf{Yêu cầu tham khảo:} \\
+    \ucYeuCau
+    \par\vspace{0.2cm}
+    \textbf{Tiền điều kiện:} \\
+    \ucTienDK
+    \par\vspace{0.2cm}
+    \textbf{Dòng sự kiện chính:}
+    \ucDongChinh
+    \vspace{0.2cm}
+    \textbf{Các dòng sự kiện phụ:}
+    \ucDongPhu
+    \par\vspace{0.2cm}
+    \textbf{Hậu điều kiện:} \\
+    \ucHauDK
+  \end{tcolorbox}
+  \vspace{0.1cm}
+  \captionof{table}{Đặc tả ca sử dụng \ucMa: \ucTen}\label{tab:\ucMa}
+  \vspace{0.3cm}
+}
+
+\begin{document}
+
+% ==========================================
+% DANH SÁCH 36 ĐẶC TẢ CA SỬ DỤNG (USE CASE)
+% ==========================================
+
+% --- UC001 ---
+\UseCaseBox{
+  ma = {UC001},
+  ten = {Đăng nhập},
+  tacnhan = {Quản lý (Admin), Giáo viên (Teacher), Học viên (Student)},
+  muctieu = {Cho phép người dùng truy cập vào hệ thống với quyền hạn tương ứng của mình.},
+  mota = {Người dùng nhập tài khoản và mật khẩu; hệ thống xác thực thông tin, kiểm tra trạng thái và cấp quyền truy cập.},
+  yeucau = {Yêu cầu bảo mật mật khẩu, hệ thống phân quyền.},
+  tiendk = {Người dùng đã có tài khoản hợp lệ trên hệ thống.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Người dùng truy cập trang Đăng nhập.
+      \item Người dùng nhập Tên đăng nhập/Email và Mật khẩu.
+      \item Người dùng nhấn nút "Đăng nhập".
+      \item Hệ thống kiểm tra thông tin đối chiếu với cơ sở dữ liệu.
+      \item Hệ thống xác định vai trò và chuyển hướng người dùng đến trang chủ (Dashboard) tương ứng.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Sai thông tin: Hệ thống hiển thị lỗi "Tên đăng nhập hoặc mật khẩu không đúng".
+      \item Tài khoản bị khóa: Hệ thống thông báo "Tài khoản đang bị vô hiệu hóa".
+    \end{itemize}
+  },
+  haudk = {Phiên làm việc (session) của người dùng được tạo, người dùng có thể sử dụng các chức năng theo quyền hạn.}
+}
+
+% --- UC002 ---
+\UseCaseBox{
+  ma = {UC002},
+  ten = {Đăng xuất},
+  tacnhan = {Quản lý, Giáo viên, Học viên},
+  muctieu = {Kết thúc phiên làm việc an toàn.},
+  mota = {Người dùng click đăng xuất để xóa phiên đăng nhập hiện tại.},
+  yeucau = {UC001 (Đăng nhập).},
+  tiendk = {Người dùng đang đăng nhập vào hệ thống.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Người dùng chọn chức năng "Đăng xuất" trên menu.
+      \item Hệ thống hủy bỏ phiên làm việc (xóa token/session).
+      \item Hệ thống chuyển hướng người dùng về trang Đăng nhập.
+    \end{enumerate}
+  },
+  dongphu = {Không có.},
+  haudk = {Người dùng không thể truy cập các trang yêu cầu đăng nhập nếu không thực hiện đăng nhập lại.}
+}
+
+% --- UC003 ---
+\UseCaseBox{
+  ma = {UC003},
+  ten = {Quản lý tài khoản cá nhân},
+  tacnhan = {Quản lý, Giáo viên, Học viên},
+  muctieu = {Cập nhật thông tin hồ sơ và bảo mật cá nhân.},
+  mota = {Xem, chỉnh sửa thông tin cá nhân (tên, SĐT, avatar) và đổi mật khẩu.},
+  yeucau = {Không.},
+  tiendk = {Người dùng đã đăng nhập.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Người dùng truy cập trang "Hồ sơ cá nhân".
+      \item Hệ thống hiển thị thông tin hiện tại.
+      \item Người dùng nhập các thay đổi (thông tin hoặc mật khẩu mới).
+      \item Người dùng nhấn "Lưu thay đổi".
+      \item Hệ thống cập nhật DB và thông báo thành công.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Mật khẩu cũ không đúng: Yêu cầu nhập lại mật khẩu hiện tại.
+      \item Dữ liệu không hợp lệ: Báo lỗi format (VD: sai định dạng số điện thoại).
+    \end{itemize}
+  },
+  haudk = {Thông tin người dùng được cập nhật mới nhất.}
+}
+
+% --- UC004 ---
+\UseCaseBox{
+  ma = {UC004},
+  ten = {Quản lý tài khoản người dùng},
+  tacnhan = {Quản lý (Admin)},
+  muctieu = {Duy trì và kiểm soát danh sách tài khoản trong hệ thống.},
+  mota = {Admin thêm mới, chỉnh sửa, khóa/mở khóa tài khoản.},
+  yeucau = {UC005 (Phân quyền).},
+  tiendk = {Đăng nhập với quyền Quản lý.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Quản lý chọn menu "Quản lý tài khoản".
+      \item Hệ thống hiển thị danh sách tài khoản.
+      \item Quản lý chọn Thêm/Sửa/Khóa tài khoản.
+      \item Quản lý nhập thông tin và xác nhận.
+      \item Hệ thống lưu thay đổi và cập nhật danh sách.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Trùng email: Hệ thống báo lỗi "Email đã tồn tại".
+    \end{itemize}
+  },
+  haudk = {Danh sách tài khoản và trạng thái được cập nhật.}
+}
+
+% --- UC005 ---
+\UseCaseBox{
+  ma = {UC005},
+  ten = {Phân quyền người dùng},
+  tacnhan = {Quản lý},
+  muctieu = {Gán đúng vai trò (Role) cho tài khoản để đảm bảo tính bảo mật.},
+  mota = {Cài đặt quyền (Admin, Teacher, Student) cho các tài khoản.},
+  yeucau = {UC004.},
+  tiendk = {Đăng nhập quyền Quản lý, tài khoản cần phân quyền đã tồn tại.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Quản lý chọn tài khoản cần phân quyền.
+      \item Chọn chức năng "Chỉnh sửa vai trò".
+      \item Chọn vai trò từ danh sách (Giáo viên, Học viên...).
+      \item Nhấn "Lưu". Hệ thống cập nhật quyền cho tài khoản.
+    \end{enumerate}
+  },
+  dongphu = {Không có.},
+  haudk = {Tài khoản sở hữu các chức năng tương ứng với quyền mới gán.}
+}
+
+% --- UC006 ---
+\UseCaseBox{
+  ma = {UC006},
+  ten = {Quản lý giáo viên},
+  tacnhan = {Quản lý},
+  muctieu = {Quản lý hồ sơ chuyên môn và phân công giảng dạy.},
+  mota = {Xem, thêm, cập nhật hồ sơ giáo viên và trạng thái làm việc.},
+  yeucau = {UC004, UC008.},
+  tiendk = {Đăng nhập quyền Quản lý.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập "Quản lý giáo viên".
+      \item Xem danh sách và thông tin (trình độ, chứng chỉ).
+      \item Thêm mới hoặc cập nhật thông tin giáo viên.
+      \item Lưu dữ liệu.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Hủy thao tác: Quay về màn hình trước.
+    \end{itemize}
+  },
+  haudk = {Danh sách hồ sơ giáo viên được đồng bộ.}
+}
+
+% --- UC007 ---
+\UseCaseBox{
+  ma = {UC007},
+  ten = {Quản lý học viên},
+  tacnhan = {Quản lý},
+  muctieu = {Kiểm soát thông tin đầu vào và trạng thái học tập của học viên.},
+  mota = {Quản lý hồ sơ cá nhân, trình độ đầu vào của học viên.},
+  yeucau = {UC004, UC009.},
+  tiendk = {Đăng nhập quyền Quản lý.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập "Quản lý học viên".
+      \item Thêm học viên đơn lẻ hoặc import từ file Excel.
+      \item Cập nhật thông tin (Tên, tuổi, số điện thoại phụ huynh).
+      \item Hệ thống lưu và tạo hồ sơ.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Import lỗi: File Excel sai format, hệ thống báo lỗi các dòng cụ thể.
+    \end{itemize}
+  },
+  haudk = {Học viên có hồ sơ lưu trữ trên hệ thống.}
+}
+
+% --- UC008 ---
+\UseCaseBox{
+  ma = {UC008},
+  ten = {Quản lý lớp học},
+  tacnhan = {Quản lý},
+  muctieu = {Tổ chức các lớp học và phân công giáo viên.},
+  mota = {Tạo lớp, đóng/mở lớp, gán giáo viên phụ trách.},
+  yeucau = {UC006.},
+  tiendk = {Đăng nhập quyền Quản lý.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chọn "Quản lý lớp học" $\rightarrow$ "Tạo mới".
+      \item Nhập Tên lớp, Trình độ, Thời gian học.
+      \item Chọn giáo viên phụ trách từ danh sách.
+      \item Nhấn "Lưu".
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Đóng lớp học khi đã hoàn thành khóa học.
+    \end{itemize}
+  },
+  haudk = {Lớp học được tạo, sẵn sàng để thêm học viên.}
+}
+
+% --- UC009 ---
+\UseCaseBox{
+  ma = {UC009},
+  ten = {Quản lý thành viên lớp học},
+  tacnhan = {Quản lý, Giáo viên},
+  muctieu = {Sắp xếp học viên vào đúng lớp.},
+  mota = {Thêm, xóa, hoặc chuyển lớp cho học viên.},
+  yeucau = {UC007, UC008.},
+  tiendk = {Lớp học và hồ sơ học viên đã tồn tại.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập chi tiết Lớp học $\rightarrow$ "Thành viên".
+      \item Nhấn "Thêm học viên". Chọn từ danh sách có sẵn.
+      \item Nhấn xác nhận.
+      \item Hệ thống thêm học viên vào lớp.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chuyển học viên từ lớp A sang lớp B.
+    \end{itemize}
+  },
+  haudk = {Danh sách (sĩ số) của lớp học được cập nhật.}
+}
+
+% --- UC010 ---
+\UseCaseBox{
+  ma = {UC010},
+  ten = {Xem danh sách lớp học},
+  tacnhan = {Giáo viên, Học viên},
+  muctieu = {Biết được các lớp mình đang giảng dạy hoặc tham gia.},
+  mota = {Hiển thị danh sách các lớp học được phân công.},
+  yeucau = {UC008, UC009.},
+  tiendk = {Đăng nhập quyền Teacher hoặc Student.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập menu "Lớp học của tôi".
+      \item Hệ thống truy xuất DB và hiển thị danh sách lớp (Tên lớp, sĩ số, lịch học).
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Nếu chưa có lớp, hệ thống thông báo "Bạn chưa tham gia lớp học nào".
+    \end{itemize}
+  },
+  haudk = {Người dùng thấy được lớp học tương ứng.}
+}
+
+% --- UC011 ---
+\UseCaseBox{
+  ma = {UC011},
+  ten = {Quản lý bài tập},
+  tacnhan = {Giáo viên},
+  muctieu = {Kiểm soát thư viện bài tập của lớp.},
+  mota = {Xem, tìm kiếm, chỉnh sửa, xóa bài tập đã tạo.},
+  yeucau = {UC012.},
+  tiendk = {Đăng nhập quyền Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Vào mục "Bài tập" của lớp.
+      \item Hệ thống hiển thị danh sách bài tập.
+      \item Sử dụng bộ lọc (kỹ năng, trạng thái) để tìm kiếm.
+      \item Chọn Sửa hoặc Xóa bài tập.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Sao chép bài tập sang lớp khác.
+    \end{itemize}
+  },
+  haudk = {Thư viện bài tập được cập nhật/sắp xếp.}
+}
+
+% --- UC012 ---
+\UseCaseBox{
+  ma = {UC012},
+  ten = {Tạo bài tập},
+  tacnhan = {Giáo viên},
+  muctieu = {Xây dựng nội dung bài kiểm tra/luyện tập cho học viên.},
+  mota = {Thiết lập câu hỏi, đáp án, chọn kỹ năng, thời gian làm bài, điểm số.},
+  yeucau = {UC011.},
+  tiendk = {Đăng nhập quyền Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chọn "Tạo bài tập mới".
+      \item Nhập Tiêu đề, Chọn loại kỹ năng (Nghe/Nói/Đọc/Viết).
+      \item Soạn thảo nội dung (tải file Audio, tạo câu hỏi trắc nghiệm, tạo đề tự luận).
+      \item Nhập đáp án chuẩn và thiết lập điểm.
+      \item Lưu lại dưới dạng bản nháp hoặc xuất bản luôn.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Import ngân hàng câu hỏi từ file Excel/Word.
+    \end{itemize}
+  },
+  haudk = {Bài tập được lưu vào cơ sở dữ liệu hệ thống.}
+}
+
+% --- UC013 ---
+\UseCaseBox{
+  ma = {UC013},
+  ten = {Mở bài tập},
+  tacnhan = {Giáo viên},
+  muctieu = {Giao bài cho học viên bắt đầu làm.},
+  mota = {Đổi trạng thái bài tập sang "Đang mở", thiết lập deadline.},
+  yeucau = {UC012, UC015.},
+  tiendk = {Bài tập đã được tạo xong nội dung.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chọn bài tập trong danh sách.
+      \item Chọn "Giao bài / Mở bài".
+      \item Thiết lập thời gian bắt đầu và hạn chót (Deadline).
+      \item Xác nhận. Hệ thống gửi thông báo cho học viên.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Hẹn giờ mở bài tự động.
+    \end{itemize}
+  },
+  haudk = {Học viên có thể nhìn thấy và truy cập làm bài tập.}
+}
+
+% --- UC014 ---
+\UseCaseBox{
+  ma = {UC014},
+  ten = {Khóa bài tập},
+  tacnhan = {Giáo viên (hoặc hệ thống tự động)},
+  muctieu = {Dừng việc nhận bài làm mới từ học viên.},
+  mota = {Vô hiệu hóa chức năng nộp bài khi hết hạn hoặc khi giáo viên chủ động khóa.},
+  yeucau = {UC013.},
+  tiendk = {Bài tập đang ở trạng thái Mở.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Giáo viên chọn bài tập đang mở.
+      \item Chọn chức năng "Khóa bài tập".
+      \item Hệ thống chặn nút nộp bài đối với học viên.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Hệ thống tự động khóa khi tới thời điểm Deadline đã thiết lập.
+    \end{itemize}
+  },
+  haudk = {Bài tập chuyển sang trạng thái "Đã đóng", học viên không thể nộp bài.}
+}
+
+% --- UC015 ---
+\UseCaseBox{
+  ma = {UC015},
+  ten = {Xem bài tập},
+  tacnhan = {Học viên},
+  muctieu = {Nắm bắt yêu cầu và deadline của bài tập được giao.},
+  mota = {Học viên xem danh sách bài tập, trạng thái và yêu cầu chi tiết.},
+  yeucau = {UC013.},
+  tiendk = {Đăng nhập quyền Student.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên truy cập "Bài tập của tôi".
+      \item Hệ thống hiển thị danh sách (Tiêu đề, Deadline, Trạng thái: Chưa làm, Đã nộp...).
+      \item Nhấn vào một bài tập để xem hướng dẫn chi tiết.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Lọc bài tập theo kỹ năng (Nghe, Nói, Đọc, Viết).
+    \end{itemize}
+  },
+  haudk = {Học viên hiểu yêu cầu và sẵn sàng làm bài.}
+}
+
+% --- UC016 ---
+\UseCaseBox{
+  ma = {UC016},
+  ten = {Làm bài tập viết},
+  tacnhan = {Học viên},
+  muctieu = {Hoàn thành phần trả lời cho kỹ năng Viết.},
+  mota = {Học viên đọc đề bài, soạn thảo nội dung trực tiếp trên web hoặc tải file lên.},
+  yeucau = {UC015, UC020, UC021.},
+  tiendk = {Bài tập Viết đang mở.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên mở bài tập Viết.
+      \item Đọc đề bài (Task 1, Task 2).
+      \item Nhập văn bản vào khung soạn thảo (có bộ đếm từ - word count).
+      \item Kiểm tra lại văn bản.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Upload file (.docx, .pdf) thay vì gõ trực tiếp.
+    \end{itemize}
+  },
+  haudk = {Nội dung viết được điền sẵn sàng để lưu nháp hoặc nộp.}
+}
+
+% --- UC017 ---
+\UseCaseBox{
+  ma = {UC017},
+  ten = {Làm bài tập nói},
+  tacnhan = {Học viên},
+  muctieu = {Hoàn thành bài kiểm tra kỹ năng Nói.},
+  mota = {Ghi âm trực tiếp qua trình duyệt hoặc tải file âm thanh lên hệ thống.},
+  yeucau = {UC015, UC021.},
+  tiendk = {Bài tập Nói đang mở, thiết bị có Microphone hợp lệ.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Mở bài tập Nói, đọc/nghe câu hỏi.
+      \item Nhấn "Ghi âm" (Cấp quyền Micro cho trình duyệt).
+      \item Trả lời câu hỏi.
+      \item Nhấn "Dừng" và nghe lại đoạn ghi âm.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Tải lên tệp âm thanh có sẵn (.mp3, .wav).
+      \item Ghi âm lại nhiều lần trước khi nộp.
+    \end{itemize}
+  },
+  haudk = {File âm thanh được tải lên máy chủ chờ nộp bài.}
+}
+
+% --- UC018 ---
+\UseCaseBox{
+  ma = {UC018},
+  ten = {Làm bài tập đọc},
+  tacnhan = {Học viên},
+  muctieu = {Kiểm tra kỹ năng đọc hiểu.},
+  mota = {Đọc văn bản, trả lời các dạng câu hỏi trắc nghiệm, điền từ, True/False/Not Given.},
+  yeucau = {UC015, UC021.},
+  tiendk = {Bài tập Đọc đang mở.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Mở bài tập Đọc.
+      \item Đọc đoạn văn hiển thị bên trái màn hình.
+      \item Trả lời các câu hỏi tương ứng bên phải màn hình.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Highlight (bôi màu) các đoạn văn bản nháp trực tiếp trên trình duyệt.
+    \end{itemize}
+  },
+  haudk = {Các câu trả lời được chọn đầy đủ.}
+}
+
+% --- UC019 ---
+\UseCaseBox{
+  ma = {UC019},
+  ten = {Làm bài tập nghe},
+  tacnhan = {Học viên},
+  muctieu = {Kiểm tra kỹ năng nghe hiểu âm thanh tiếng Anh.},
+  mota = {Học viên phát file audio và chọn/nhập đáp án cùng lúc.},
+  yeucau = {UC015, UC021.},
+  tiendk = {Bài tập Nghe đang mở, thiết bị có loa/tai nghe hoạt động.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Mở bài tập Nghe.
+      \item Nhấn nút "Play" (Phát) file Audio.
+      \item Nghe và chọn/điền đáp án vào các câu hỏi bên dưới.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Giáo viên giới hạn số lần Play audio (vd: chỉ được nghe 1 lần) $\rightarrow$ Hệ thống tự động disable nút Play sau khi hết lượt.
+    \end{itemize}
+  },
+  haudk = {Câu trả lời được nhập đầy đủ, kết thúc thời gian nghe.}
+}
+
+% --- UC020 ---
+\UseCaseBox{
+  ma = {UC020},
+  ten = {Lưu và khôi phục bài làm},
+  tacnhan = {Học viên},
+  muctieu = {Bảo vệ dữ liệu bài làm khỏi sự cố (mất mạng, tắt máy).},
+  mota = {Hệ thống tự động auto-save bài làm sau mỗi vài giây, hoặc lưu thủ công.},
+  yeucau = {UC016-UC019.},
+  tiendk = {Đang trong quá trình làm bài.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên đang gõ/nhập đáp án.
+      \item Hệ thống chạy ngầm chức năng tự động lưu (Auto-save) lên local storage / database sau mỗi 30s.
+      \item Nếu học viên đóng trình duyệt và mở lại, hệ thống gợi ý "Khôi phục bài làm nháp gần nhất".
+      \item Học viên chọn "Đồng ý", dữ liệu cũ được điền lại.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên tự nhấn nút "Lưu nháp" thủ công.
+    \end{itemize}
+  },
+  haudk = {Dữ liệu không bị mất trong quá trình thực hiện bài tập.}
+}
+
+% --- UC021 ---
+\UseCaseBox{
+  ma = {UC021},
+  ten = {Nộp bài tập},
+  tacnhan = {Học viên},
+  muctieu = {Gửi bài làm lên hệ thống để chờ chấm điểm.},
+  mota = {Học viên xác nhận hoàn thành và nộp; hệ thống ghi nhận thời gian nộp.},
+  yeucau = {UC016-UC019, UC023.},
+  tiendk = {Đã hoàn thành các câu hỏi, bài tập chưa bị khóa.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên nhấn nút "Nộp bài".
+      \item Hệ thống hiển thị popup xác nhận "Bạn có chắc chắn muốn nộp bài?".
+      \item Học viên nhấn "Xác nhận".
+      \item Hệ thống ghi nhận trạng thái bài nộp, thời gian nộp và khóa bài làm của cá nhân học viên.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chưa làm hết câu hỏi $\rightarrow$ Hệ thống cảnh báo "Bạn còn X câu chưa làm, vẫn tiếp tục nộp?".
+    \end{itemize}
+  },
+  haudk = {Bài làm được gửi thành công, chuyển sang trạng thái "Chờ chấm".}
+}
+
+% --- UC022 ---
+\UseCaseBox{
+  ma = {UC022},
+  ten = {Quản lý lần làm và nộp lại bài},
+  tacnhan = {Học viên, Giáo viên},
+  muctieu = {Cho phép làm lại bài nếu chính sách bài tập cho phép.},
+  mota = {Hệ thống kiểm tra số lần được phép làm; học viên có thể nộp lại.},
+  yeucau = {UC021.},
+  tiendk = {Bài tập được thiết lập số lần làm $>$ 1 và chưa quá hạn.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên đã nộp bài lần 1.
+      \item Học viên vào lại bài tập, thấy nút "Làm lại bài (Còn x lượt)".
+      \item Chọn "Làm lại", hệ thống tạo form bài làm mới trắng trơn.
+      \item Thực hiện và nộp bài lần 2.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Hết số lượt làm lại $\rightarrow$ Nút bị ẩn.
+    \end{itemize}
+  },
+  haudk = {Lưu trữ lịch sử tất cả các lần nộp của học viên.}
+}
+
+% --- UC023 ---
+\UseCaseBox{
+  ma = {UC023},
+  ten = {Xem trạng thái bài làm},
+  tacnhan = {Học viên},
+  muctieu = {Theo dõi tiến trình bài tập của mình.},
+  mota = {Cập nhật hiển thị (Chưa làm, Đã nộp, Đang chấm, Đã chấm).},
+  yeucau = {UC021, UC024.},
+  tiendk = {Đã được giao bài tập.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên truy cập trang tổng quan (Dashboard) hoặc danh sách bài tập.
+      \item Hệ thống hiển thị nhãn trạng thái (Status tag) màu sắc bên cạnh mỗi bài tập.
+    \end{enumerate}
+  },
+  dongphu = {Không có.},
+  haudk = {Học viên biết rõ bài nào cần làm, bài nào đã có kết quả.}
+}
+
+% --- UC024 ---
+\UseCaseBox{
+  ma = {UC024},
+  ten = {Chấm bài},
+  tacnhan = {Giáo viên},
+  muctieu = {Đánh giá năng lực của học viên và trả kết quả.},
+  mota = {Giáo viên xem bài làm, chấm điểm, nhận xét thủ công.},
+  yeucau = {UC021.},
+  tiendk = {Đăng nhập Teacher, Học viên đã nộp bài.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Giáo viên chọn danh sách bài "Chờ chấm".
+      \item Mở bài làm của 1 học viên.
+      \item Đọc/nghe bài làm, nhập điểm cho từng câu/phần.
+      \item Ghi chú, comment nhận xét vào trực tiếp bài làm (inline comment) hoặc nhận xét chung.
+      \item Nhấn "Xác nhận \& Trả bài".
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Lưu nháp kết quả chấm để xem lại sau.
+    \end{itemize}
+  },
+  haudk = {Trạng thái bài làm đổi thành "Đã chấm", học viên nhận được thông báo có điểm.}
+}
+
+% --- UC025 ---
+\UseCaseBox{
+  ma = {UC025},
+  ten = {Hỗ trợ chấm chữa bài bằng AI (Chung)},
+  tacnhan = {Giáo viên, Hệ thống AI},
+  muctieu = {Tối ưu hóa thời gian chấm bài cho giáo viên, đưa ra đánh giá khách quan.},
+  mota = {Gọi API AI để phân tích bài làm, đề xuất lỗi và điểm, sau đó giáo viên duyệt lại.},
+  yeucau = {UC026, UC027.},
+  tiendk = {Hệ thống được tích hợp module AI hoạt động ổn định.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Giáo viên mở bài làm của học viên.
+      \item Nhấn "Gợi ý chấm bằng AI".
+      \item Hệ thống gửi dữ liệu lên AI model, chờ trả kết quả.
+      \item Hệ thống hiển thị điểm đề xuất, các lỗi highlight trên giao diện.
+      \item Giáo viên kiểm tra, có thể sửa lại điểm AI đề xuất nếu thấy chưa phù hợp.
+      \item Xác nhận kết quả cuối.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Lỗi kết nối AI $\rightarrow$ Báo lỗi "Hệ thống AI đang gián đoạn, vui lòng chấm thủ công".
+    \end{itemize}
+  },
+  haudk = {Bài làm có kết quả đánh giá sơ bộ từ AI được lưu lại.}
+}
+
+% --- UC026 ---
+\UseCaseBox{
+  ma = {UC026},
+  ten = {Hỗ trợ chấm chữa bài viết bằng AI},
+  tacnhan = {Giáo viên, AI},
+  muctieu = {Phát hiện lỗi ngữ pháp, từ vựng và cấu trúc bài viết tự động.},
+  mota = {AI đánh giá Writing theo các tiêu chí (Grammar, Lexical Resource, Coherence, Task Achievement).},
+  yeucau = {UC025.},
+  tiendk = {Bài làm thuộc kỹ năng Viết.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Gửi text bài viết lên AI.
+      \item AI trả về kết quả bôi đỏ (lỗi chính tả), bôi vàng (lỗi ngữ pháp), bôi xanh lam (từ vựng chưa hay).
+      \item AI đề xuất cách sửa (Rewrite suggestion) cho từng câu lỗi.
+      \item AI tổng hợp điểm từng tiêu chí.
+      \item Giáo viên duyệt, chọn Accept (chấp nhận) hoặc Reject (từ chối) gợi ý của AI.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Bài viết phát hiện đạo văn (Plagiarism) $\rightarrow$ AI cảnh báo đỏ 100\%.
+    \end{itemize}
+  },
+  haudk = {Bài viết có đầy đủ chú thích lỗi và điểm chi tiết.}
+}
+
+% --- UC027 ---
+\UseCaseBox{
+  ma = {UC027},
+  ten = {Hỗ trợ chấm chữa bài nói bằng AI},
+  tacnhan = {Giáo viên, AI},
+  muctieu = {Đánh giá phát âm, độ lưu loát của giọng nói tự động.},
+  mota = {AI chuyển Speech-to-text và phân tích phát âm (Pronunciation), độ trôi chảy (Fluency).},
+  yeucau = {UC025.},
+  tiendk = {Bài làm thuộc kỹ năng Nói, chất lượng âm thanh rõ.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Hệ thống gửi file Audio lên AI.
+      \item AI bóc băng (Transcript) đoạn nói của học viên.
+      \item Phân tích các từ phát âm sai (mispronounced words) hiển thị màu đỏ trên Transcript.
+      \item Đánh giá nhịp điệu (Intonation) và độ ngập ngừng. Đề xuất điểm.
+      \item Giáo viên nghe lại và chốt điểm cuối.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Tạp âm quá ồn $\rightarrow$ AI trả về cảnh báo "Chất lượng âm thanh quá thấp không thể phân tích".
+    \end{itemize}
+  },
+  haudk = {Đánh giá kỹ năng Speaking hoàn tất.}
+}
+
+% --- UC028 ---
+\UseCaseBox{
+  ma = {UC028},
+  ten = {Chấm bài đọc (Reading)},
+  tacnhan = {Hệ thống, Giáo viên},
+  muctieu = {Tự động chấm điểm khách quan.},
+  mota = {Hệ thống so khớp đáp án của học viên với đáp án gốc (Answer key) của giáo viên.},
+  yeucau = {UC018.},
+  tiendk = {Đã khai báo đáp án đúng khi tạo bài.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên nộp bài Đọc.
+      \item Hệ thống tự động so sánh từng câu trả lời.
+      \item Tính tổng số câu đúng và quy đổi ra điểm hệ 10 hoặc hệ IELTS/TOEIC.
+      \item Lưu điểm lập tức vào hệ thống.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Có câu trả lời dạng điền từ (tương đối đúng) $\rightarrow$ Hệ thống gán trạng thái "Cần giáo viên duyệt lại".
+    \end{itemize}
+  },
+  haudk = {Điểm số phần Reading được xác định.}
+}
+
+% --- UC029 ---
+\UseCaseBox{
+  ma = {UC029},
+  ten = {Chấm bài nghe (Listening)},
+  tacnhan = {Hệ thống, Giáo viên},
+  muctieu = {Tự động hóa chấm điểm nghe.},
+  mota = {Tương tự bài đọc, hệ thống đối chiếu và tính điểm tự động.},
+  yeucau = {UC019.},
+  tiendk = {Khai báo sẵn Answer key.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên nộp bài Nghe.
+      \item Hệ thống tự động chấm câu trắc nghiệm, điền từ (khớp chính xác).
+      \item Đưa ra điểm tự động.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Nếu học viên điền sai viết hoa/thường nhưng đúng từ $\rightarrow$ Cấu hình cho phép tính là Đúng.
+    \end{itemize}
+  },
+  haudk = {Điểm Listening được ghi nhận.}
+}
+
+% --- UC030 ---
+\UseCaseBox{
+  ma = {UC030},
+  ten = {Xem điểm số},
+  tacnhan = {Học viên, Giáo viên},
+  muctieu = {Nắm bắt điểm số của các bài tập đã nộp.},
+  mota = {Hiển thị điểm thi/điểm bài tập trực quan.},
+  yeucau = {Không.},
+  tiendk = {Bài đã được chấm và công bố điểm.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập mục "Bảng điểm / Kết quả".
+      \item Hệ thống hiển thị danh sách bài tập kèm điểm số đạt được, điểm tối đa.
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Thông tin điểm số minh bạch đến người dùng.}
+}
+
+% --- UC031 ---
+\UseCaseBox{
+  ma = {UC031},
+  ten = {Quản lý điểm số},
+  tacnhan = {Giáo viên},
+  muctieu = {Quản lý sổ điểm của cả lớp.},
+  mota = {Xem bảng điểm tổng hợp, cập nhật, chỉnh sửa điểm nếu có sai sót.},
+  yeucau = {UC030.},
+  tiendk = {Đăng nhập Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Vào mục "Quản lý điểm số" của 1 lớp.
+      \item Hệ thống hiển thị bảng Matrix (Học viên x Bài tập).
+      \item Giáo viên có thể click vào ô điểm để sửa thủ công (kèm lý do sửa).
+      \item Lưu thay đổi và xuất file Excel nếu cần.
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Sổ điểm chuẩn xác được lưu vết (audit log).}
+}
+
+% --- UC032 ---
+\UseCaseBox{
+  ma = {UC032},
+  ten = {Xem kết quả học tập},
+  tacnhan = {Học viên},
+  muctieu = {Nhìn nhận bức tranh toàn cảnh về tiến bộ cá nhân.},
+  mota = {Xem biểu đồ, điểm trung bình, xếp hạng trong lớp.},
+  yeucau = {UC030.},
+  tiendk = {Có dữ liệu điểm số hệ thống.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên chọn "Tiến độ học tập".
+      \item Hệ thống render biểu đồ radar (4 kỹ năng Nghe-Nói-Đọc-Viết) thể hiện điểm yếu/mạnh.
+      \item Xem điểm trung bình toàn khóa.
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Học viên có định hướng cải thiện việc học.}
+}
+
+% --- UC033 ---
+\UseCaseBox{
+  ma = {UC033},
+  ten = {Xem bài chữa},
+  tacnhan = {Học viên},
+  muctieu = {Học hỏi từ các lỗi sai để rút kinh nghiệm.},
+  mota = {Học viên xem lại chi tiết bài làm, đọc comment nhận xét của giáo viên và AI.},
+  yeucau = {UC024, UC025.},
+  tiendk = {Bài đã được chấm.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Học viên click vào "Chi tiết bài chữa" của bài đã có điểm.
+      \item Hệ thống hiển thị bài làm kèm các đánh dấu màu sắc (highlight lỗi).
+      \item Đọc/nghe phần nhận xét (Feedback) từ giáo viên.
+      \item Xem đáp án chuẩn (Answer key/Sample answer).
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Học viên tiếp thu kiến thức sửa lỗi.}
+}
+
+% --- UC034 ---
+\UseCaseBox{
+  ma = {UC034},
+  ten = {Xem và đánh giá kết quả học viên},
+  tacnhan = {Giáo viên},
+  muctieu = {Đánh giá định kỳ năng lực từng cá nhân.},
+  mota = {Giáo viên xem hồ sơ tiến bộ của một học viên cụ thể và viết nhận xét cuối tháng/khóa.},
+  yeucau = {UC032.},
+  tiendk = {Đăng nhập Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Chọn một học viên trong danh sách lớp.
+      \item Xem lịch sử làm bài, biểu đồ điểm số các kỹ năng của học viên đó.
+      \item Viết đánh giá (Report) tổng quan về thái độ và năng lực.
+      \item Gửi đánh giá cho học viên.
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Báo cáo đánh giá cá nhân được lưu vào hồ sơ học viên.}
+}
+
+% --- UC035 ---
+\UseCaseBox{
+  ma = {UC035},
+  ten = {Theo dõi tiến độ học tập},
+  tacnhan = {Giáo viên},
+  muctieu = {Nhận diện tình hình chung của lớp, phát hiện học viên tụt hậu.},
+  mota = {Xem tỷ lệ nộp bài, biểu đồ điểm trung bình của cả lớp.},
+  yeucau = {Không.},
+  tiendk = {Đăng nhập Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Truy cập "Báo cáo lớp học".
+      \item Hệ thống hiển thị Dashboard: Tỷ lệ hoàn thành bài tập (\%), tỷ lệ học viên dưới trung bình.
+      \item Giáo viên dựa vào đó để điều chỉnh phương pháp dạy.
+    \end{enumerate}
+  },
+  dongphu = {Không.},
+  haudk = {Giáo viên có dữ liệu để quản trị chất lượng lớp học.}
+}
+
+% --- UC036 ---
+\UseCaseBox{
+  ma = {UC036},
+  ten = {Xem báo cáo và thống kê học tập},
+  tacnhan = {Quản lý (Admin), Giáo viên},
+  muctieu = {Quản lý bức tranh tổng thể hoạt động của toàn trung tâm/nhiều lớp.},
+  mota = {Xuất báo cáo hiệu suất, thống kê số lượng bài được giao, điểm số trung bình các khóa.},
+  yeucau = {Không.},
+  tiendk = {Đăng nhập Admin hoặc Teacher.},
+  dongchinh = {
+    \begin{enumerate}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Quản lý truy cập "Thống kê báo cáo".
+      \item Thiết lập bộ lọc (Từ tháng X đến tháng Y, theo chi nhánh/lớp/giáo viên).
+      \item Hệ thống xuất ra các báo cáo dạng số liệu và biểu đồ (KPI).
+      \item Nhấn "Xuất PDF/Excel" để tải báo cáo.
+    \end{enumerate}
+  },
+  dongphu = {
+    \begin{itemize}[leftmargin=*, topsep=0pt, itemsep=0pt]
+      \item Không có dữ liệu trong khoảng thời gian đã chọn $\rightarrow$ Hiển thị "Không có dữ liệu".
+    \end{itemize}
+  },
+  haudk = {Tải về được file báo cáo thống kê chính xác phục vụ cho việc vận hành trung tâm.}
+}
+
+\end{document}

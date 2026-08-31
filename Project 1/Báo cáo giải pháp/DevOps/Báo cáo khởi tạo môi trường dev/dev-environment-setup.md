@@ -10,8 +10,6 @@ Tài liệu mô tả cách setup môi trường **dev chạy local trên máy** 
 | Backend (BE) | Java 21, Spring 4.1.1, Gradle (Groovy DSL) | `./gradlew bootRun` **hoặc** build Docker image rồi chạy local |
 | Database (DB) | PostgreSQL | Docker container local |
 
-Tài liệu **không đề cập việc deploy** (Vercel, VPS, Neon...) — chỉ tập trung vào việc dựng môi trường để code và test trên máy dev.
-
 Tài liệu chia làm 2 luồng:
 
 - **A. Khởi tạo dự án mới** — áp dụng khi tạo repo từ đầu, cần tạo các file cấu hình phục vụ dev local (Dockerfile để build image local, docker-compose cho DB, file properties...).
@@ -58,8 +56,9 @@ project-root/
 │   ├── gradlew / gradlew.bat
 │   ├── Dockerfile                 # build image BE để chạy local qua Docker
 │   └── .dockerignore
-├── docker-compose.dev.yml         # chạy Postgres cho môi trường dev
-├── env.docker_compose.example     # mẫu biến môi trường docker-compose → chuyển thành .env
+├── database
+│   ├── docker-compose.dev.yml         # chạy Postgres cho môi trường dev
+│   └── env.docker_compose.example     # mẫu biến môi trường docker-compose → chuyển thành .env
 └── docs/
     └── dev-environment-setup.md   # chính là file báo cáo này
 ```
