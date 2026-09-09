@@ -58,6 +58,7 @@
 ### Tài liệu
 
 - Nhóm Teams
+- [Drive tài liệu năm trước](https://drive.google.com/drive/u/0/folders/1UInvdGzQo4Qf_pqF7RQyMNQoXxc4DjuK)
 
 ## Kiểm thử phần mềm
 
@@ -65,7 +66,8 @@
 
 ### Nội dung
 
-* Điểm quá trình: Chuyển cần + Bài ktra + BTL(Điểm BTL cộng cho bài ktra, Ko bắt buộc, ko miễn thi)
+* Điểm quá trình: Chuyển cần + Bài ktra(Làm vào cuối kì)
+* Btl: Tùy chọn, miễn thi cuối kì, cộng tối đa 2 điểm vào bài thi cuối kì
 * Thi tự luận
 
 ### Tài liệu
