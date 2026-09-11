@@ -9,3 +9,5 @@
 *.toc
 *.xdv
 *.drawio.bkp
+*.~lock.*
+*.dbdiagram

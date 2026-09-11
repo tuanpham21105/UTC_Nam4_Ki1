@@ -1,0 +1,520 @@
+// ============================================================================
+// Website quản lý bài tập & chấm chữa bài tiếng Anh thông minh — Group 4
+// BẢN V2 FINAL — phản chiếu đúng V2__fix_db_review_bugs.sql
+// 18 bảng (17 V1 + question_options + answer_results − criteria_scores)
+// Paste toàn bộ vào https://dbdiagram.io để xem ERD
+// ============================================================================
+
+Enum user_role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+Enum user_status {
+  ACTIVE
+  LOCKED
+}
+
+Enum class_status {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+Enum class_member_type {
+  PRIMARY
+  SUPPLEMENTARY
+}
+
+Enum class_member_status {
+  ACTIVE
+  ENDED
+}
+
+Enum assignment_status {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+Enum module_skill {
+  READING
+  LISTENING
+  WRITING
+  SPEAKING
+}
+
+Enum module_task_type {
+  QUIZ
+  REWRITE
+  RECORDING
+  ESSAY
+}
+
+Enum upload_status {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+Enum question_type {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+}
+
+Enum submission_status {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+
+Enum annotation_source {
+  AI
+  TEACHER
+}
+
+Enum review_status {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// V2: bỏ giá trị AI — AI không tự chấm điểm, chỉ chỉ lỗi + nhận xét text
+Enum grading_method {
+  AUTO
+  TEACHER_MANUAL
+}
+
+// V2: +AI_GRADED — "AI đã phân tích/chú thích xong, chờ giáo viên chấm"
+Enum grading_status {
+  PENDING
+  AI_GRADED
+  COMPLETED
+  FAILED
+}
+
+// ---------------------------------------------------------------------------
+// 1. USERS
+// ---------------------------------------------------------------------------
+
+Table users {
+  id bigint [pk, increment]
+  full_name varchar(150) [not null]
+  email varchar(150) [not null, unique]
+  phone varchar(20)
+  avatar_url varchar(255)
+  password_hash varchar(255) [not null]
+  role user_role [not null]
+  status user_status [not null, default: 'ACTIVE']
+  is_deleted boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    role [name: 'idx_users_role']
+    status [name: 'idx_users_status']
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 2. TEACHER PROFILES
+// ---------------------------------------------------------------------------
+
+Table teacher_profiles {
+  user_id bigint [pk]
+  specialization varchar(150)
+}
+
+// ---------------------------------------------------------------------------
+// 3. STUDENT PROFILES
+// ---------------------------------------------------------------------------
+
+Table student_profiles {
+  user_id bigint [pk]
+  student_code varchar(30) [unique]
+  date_of_birth date
+  parent_phone varchar(20)
+}
+
+// ---------------------------------------------------------------------------
+// 4. CLASSES  [V2: status đổi VARCHAR(20) -> ENUM class_status, BUG_DB_10]
+// ---------------------------------------------------------------------------
+
+Table classes {
+  id bigint [pk, increment]
+  name varchar(150) [not null]
+  level varchar(50)
+  description text
+  start_date date [not null]
+  end_date date
+  status class_status
+  teacher_id bigint
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    teacher_id [name: 'idx_classes_teacher_id']
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 5. CLASS MEMBERS  [V2: +ended_at, UNIQUE -> partial unique WHERE ACTIVE]
+// ---------------------------------------------------------------------------
+
+Table class_members {
+  id bigint [pk, increment]
+  class_id bigint [not null]
+  student_id bigint [not null]
+  member_type class_member_type [not null]
+  status class_member_status [not null, default: 'ACTIVE']
+  ended_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    class_id [name: 'idx_class_members_class_id']
+    student_id [name: 'idx_class_members_student_id']
+    // V1 constraint uq_class_members_class_student (UNIQUE cứng) đã bị DROP ở V2.
+    // Thay bằng 2 partial unique index (không biểu diễn được trực tiếp trong DBML):
+    // CREATE UNIQUE INDEX uq_class_members_active_class_student
+    //   ON class_members (class_id, student_id) WHERE status = 'ACTIVE';         -- [MỚI V2, fix BUG_DB_15]
+    // CREATE UNIQUE INDEX uq_class_members_one_active_primary_per_student
+    //   ON class_members (student_id) WHERE member_type = 'PRIMARY' AND status = 'ACTIVE'; -- (giữ từ V1)
+  }
+
+  Note: 'V2: ended_at lưu thời điểm rời lớp (BUG_DB_16). UNIQUE(class_id, student_id) cũ đổi thành partial index chỉ áp dụng khi status=ACTIVE, cho phép học lại lớp sau khi ENDED (BUG_DB_15).'
+}
+
+// ---------------------------------------------------------------------------
+// 6. ASSIGNMENTS  [V2: +status enum DRAFT/PUBLISHED/CLOSED, BUG_DB_09]
+// ---------------------------------------------------------------------------
+
+Table assignments {
+  id bigint [pk, increment]
+  class_id bigint [not null]
+  teacher_id bigint [not null]
+  title varchar(200) [not null]
+  description text
+  open_at timestamptz [not null]
+  close_at timestamptz [not null]
+  max_submissions int
+  status assignment_status [not null, default: 'DRAFT']
+  is_manually_closed boolean [not null, default: false]
+  is_deleted boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    class_id [name: 'idx_assignments_class_id']
+    teacher_id [name: 'idx_assignments_teacher_id']
+  }
+
+  Note: 'CHECK (open_at < close_at). is_manually_closed giữ song song với status mới (chưa hợp nhất, chờ tester dùng thử V2).'
+}
+
+// ---------------------------------------------------------------------------
+// 7. MODULES  [V2: +ai_instruction — hướng dẫn/prompt giáo viên viết cho AI]
+// ---------------------------------------------------------------------------
+
+Table modules {
+  id bigint [pk, increment]
+  assignment_id bigint [not null]
+  skill module_skill [not null]
+  task_type module_task_type [not null]
+  order_index int [not null]
+  instructions text
+  ai_instruction text
+  max_score decimal(5,2) [not null, default: 10]
+  source_audio_storage_key varchar(255)
+  source_audio_duration_seconds int
+  source_audio_mime_type varchar(50)
+  source_audio_upload_status upload_status
+
+  indexes {
+    assignment_id [name: 'idx_modules_assignment_id']
+    (assignment_id, order_index) [unique, name: 'uq_modules_assignment_order']
+  }
+
+  Note: 'ai_instruction: prompt tự do giáo viên viết cho AI chấm (không phải rubric cố định). Nullable.'
+}
+
+// ---------------------------------------------------------------------------
+// 8. QUESTIONS
+// ---------------------------------------------------------------------------
+
+Table questions {
+  id bigint [pk, increment]
+  module_id bigint [not null]
+  content text [not null]
+  question_type question_type [not null]
+  correct_answer text
+  score decimal(5,2) [not null, default: 1]
+  order_index int [not null]
+
+  indexes {
+    module_id [name: 'idx_questions_module_id']
+    (module_id, order_index) [unique, name: 'uq_questions_module_order']
+  }
+
+  Note: 'CHECK (score >= 0) — BUG_DB_06.'
+}
+
+// ---------------------------------------------------------------------------
+// 9. QUESTION OPTIONS  [MỚI V2 — fix BUG_DB_01, Blocker]
+// ---------------------------------------------------------------------------
+
+Table question_options {
+  id bigint [pk, increment]
+  question_id bigint [not null]
+  content text [not null]
+  is_correct boolean [not null, default: false]
+  order_index int [not null]
+
+  indexes {
+    question_id [name: 'idx_question_options_question_id']
+  }
+
+  Note: 'Lựa chọn A/B/C/D cho questions.question_type = MULTIPLE_CHOICE.'
+}
+
+// ---------------------------------------------------------------------------
+// 10. SUBMISSIONS
+// ---------------------------------------------------------------------------
+
+Table submissions {
+  id bigint [pk, increment]
+  assignment_id bigint [not null]
+  student_id bigint [not null]
+  attempt_number int [not null]
+  submitted_at timestamptz
+  status submission_status [not null, default: 'IN_PROGRESS']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    assignment_id [name: 'idx_submissions_assignment_id']
+    student_id [name: 'idx_submissions_student_id']
+    (assignment_id, student_id, attempt_number) [unique, name: 'uq_submissions_assignment_student_attempt']
+  }
+
+  Note: 'V2: +CHECK (status=IN_PROGRESS OR submitted_at NOT NULL), +CHECK (attempt_number > 0) — BUG_DB_13, BUG_DB_06.'
+}
+
+// ---------------------------------------------------------------------------
+// 11. SUBMISSION MODULES
+// ---------------------------------------------------------------------------
+
+Table submission_modules {
+  id bigint [pk, increment]
+  submission_id bigint [not null]
+  module_id bigint [not null]
+  status submission_status [not null, default: 'IN_PROGRESS']
+  audio_play_count int [not null, default: 0]
+
+  indexes {
+    submission_id [name: 'idx_submission_modules_submission_id']
+    module_id [name: 'idx_submission_modules_module_id']
+    (submission_id, module_id) [unique, name: 'uq_submission_modules_submission_module']
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 12. ANSWERS  [V2: +UNIQUE(submission_module_id, question_id), +CHECK]
+// ---------------------------------------------------------------------------
+
+Table answers {
+  id bigint [pk, increment]
+  submission_module_id bigint [not null]
+  question_id bigint
+  content text
+  audio_storage_key varchar(255)
+  audio_duration_seconds int
+  audio_file_size_bytes bigint
+  audio_mime_type varchar(50)
+  audio_upload_status upload_status
+  doc_storage_key varchar(255)
+  doc_mime_type varchar(50)
+  doc_file_size_bytes bigint
+  doc_upload_status upload_status
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    submission_module_id [name: 'idx_answers_submission_module_id']
+    question_id [name: 'idx_answers_question_id']
+    (submission_module_id, question_id) [unique, name: 'uq_answers_submission_module_question']
+  }
+
+  Note: 'Ràng buộc "đúng 1 trong 3 nguồn dữ liệu" (content/audio/doc) xử lý ở service layer. V2: +UNIQUE(submission_module_id, question_id) chặn spam-submit (BUG_DB_05); +CHECK audio_duration_seconds >= 0, audio_file_size_bytes >= 0 (BUG_DB_06).'
+}
+
+// ---------------------------------------------------------------------------
+// 13. ANSWER RESULTS  [MỚI V2 — fix BUG_DB_04, Blocker]
+// ---------------------------------------------------------------------------
+
+Table answer_results {
+  id bigint [pk, increment]
+  answer_id bigint [not null, unique]
+  is_correct boolean [not null]
+  score decimal(5,2) [not null]
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Kết quả chấm tự động từng câu (Reading/Listening). 1-1 với answers. CHECK (score >= 0).'
+}
+
+// ---------------------------------------------------------------------------
+// 14. ANSWER ANNOTATIONS
+// ---------------------------------------------------------------------------
+
+Table answer_annotations {
+  id bigint [pk, increment]
+  answer_id bigint [not null]
+  source annotation_source [not null]
+  start_offset int [not null]
+  end_offset int [not null]
+  error_type varchar(50)
+  comment text
+  suggested_fix text
+  review_status review_status [not null, default: 'PENDING']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    answer_id [name: 'idx_answer_annotations_answer_id']
+  }
+
+  Note: 'CHECK (end_offset >= start_offset). Đây là nơi AI chỉ lỗi (source=AI) — vai trò AI duy nhất, không tự chấm điểm.'
+}
+
+// ---------------------------------------------------------------------------
+// 15. GRADINGS  [V2: -ai_suggested_score, -plagiarism (2 cột), +ai_transcript, +ai_instruction_snapshot]
+// ---------------------------------------------------------------------------
+
+Table gradings {
+  id bigint [pk, increment]
+  submission_module_id bigint [not null, unique]
+  method grading_method [not null]
+  status grading_status [not null, default: 'PENDING']
+  ai_feedback text
+  ai_transcript jsonb
+  ai_instruction_snapshot text
+  final_score decimal(5,2)
+  final_feedback text
+  max_score_snapshot decimal(5,2)
+  reviewed_by bigint
+  reviewed_at timestamptz
+  graded_at timestamptz
+
+  indexes {
+    reviewed_by [name: 'idx_gradings_reviewed_by']
+    status [name: 'idx_gradings_status']
+  }
+
+  Note: 'V2: DROP ai_suggested_score, is_plagiarism_flagged, plagiarism_score (AI không tự chấm điểm, chưa build đạo văn). +ai_transcript (jsonb, Speaking), +ai_instruction_snapshot (chốt modules.ai_instruction lúc chấm). final_score luôn do giáo viên nhập.'
+}
+
+// ---------------------------------------------------------------------------
+// 16. REFRESH TOKENS
+// ---------------------------------------------------------------------------
+
+Table refresh_tokens {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  token_hash varchar(255) [not null, unique]
+  expires_at timestamptz [not null]
+  revoked_at timestamptz
+  user_agent varchar(255)
+  ip_address varchar(45)
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    user_id [name: 'idx_refresh_tokens_user_id']
+    (user_id, expires_at) [name: 'idx_refresh_tokens_active']
+    // Partial index WHERE revoked_at IS NULL — not representable in DBML syntax.
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 17. STUDENT EVALUATIONS
+// ---------------------------------------------------------------------------
+
+Table student_evaluations {
+  id bigint [pk, increment]
+  student_id bigint [not null]
+  teacher_id bigint [not null]
+  class_id bigint [not null]
+  content text [not null]
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    student_id [name: 'idx_student_evaluations_student_id']
+    teacher_id [name: 'idx_student_evaluations_teacher_id']
+    class_id [name: 'idx_student_evaluations_class_id']
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 18. GRADING CHANGE LOGS
+// ---------------------------------------------------------------------------
+
+Table grading_change_logs {
+  id bigint [pk, increment]
+  grading_id bigint [not null]
+  changed_by bigint [not null]
+  old_score decimal(5,2)
+  new_score decimal(5,2)
+  note text
+  changed_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (grading_id, changed_at) [name: 'idx_grading_change_logs_grading_id_changed_at']
+    changed_by [name: 'idx_grading_change_logs_changed_by']
+  }
+}
+
+// ---------------------------------------------------------------------------
+// RELATIONSHIPS (Foreign Keys)
+// criteria_scores.grading_id > gradings.id đã bị xóa cùng bảng criteria_scores (V2)
+// ---------------------------------------------------------------------------
+
+Ref: teacher_profiles.user_id - users.id
+Ref: student_profiles.user_id - users.id
+
+Ref: classes.teacher_id > teacher_profiles.user_id
+
+Ref: class_members.class_id > classes.id
+Ref: class_members.student_id > student_profiles.user_id
+
+Ref: assignments.class_id > classes.id
+Ref: assignments.teacher_id > teacher_profiles.user_id
+
+Ref: modules.assignment_id > assignments.id [delete: cascade]
+
+Ref: questions.module_id > modules.id [delete: cascade]
+
+Ref: question_options.question_id > questions.id [delete: cascade]
+
+Ref: submissions.assignment_id > assignments.id
+Ref: submissions.student_id > student_profiles.user_id
+
+Ref: submission_modules.submission_id > submissions.id [delete: cascade]
+Ref: submission_modules.module_id > modules.id
+
+Ref: answers.submission_module_id > submission_modules.id [delete: cascade]
+Ref: answers.question_id > questions.id
+
+Ref: answer_results.answer_id - answers.id [delete: cascade]
+
+Ref: answer_annotations.answer_id > answers.id [delete: cascade]
+
+Ref: gradings.submission_module_id - submission_modules.id [delete: cascade]
+Ref: gradings.reviewed_by > teacher_profiles.user_id
+
+Ref: refresh_tokens.user_id > users.id
+
+Ref: student_evaluations.student_id > student_profiles.user_id
+Ref: student_evaluations.teacher_id > teacher_profiles.user_id
+Ref: student_evaluations.class_id > classes.id
+
+Ref: grading_change_logs.grading_id > gradings.id
+Ref: grading_change_logs.changed_by > teacher_profiles.user_id
